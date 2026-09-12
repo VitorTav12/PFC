@@ -3,12 +3,16 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-    return render_template('index.html')
+def login():
+    return render_template('login.html')
 
-@app.route('/pfc')
-def sobre():
-    return "PFC"
+@app.route('/pais')
+def pais():
+    return render_template("pais.html")
+
+@app.route('/secretaria')
+def secretaria():
+    return render_template("secretaria.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
