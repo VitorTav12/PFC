@@ -12,20 +12,30 @@
             <a href="/secretaria">Secretaria</a>
     </header>
     <main class="container">
-        <form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert" style="padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+        <form method="POST" action="/">
+
             <h1>Login</h1>
 
             <div class="input-box">
-                <input placeholder="Usuários" type="text" required>
+                <input placeholder="E-mail" type="text" name="email" required>
             </div>
 
             <div class="input-box">
-                <input placeholder="Senha" type="password" required>
+                <input placeholder="Senha" type="password" name="senha" required>
             </div>
 
             <div>
                 <label>
-                    <input type="checkbox">
+                    <input type="checkbox"  name="remember">
                     Lembrar minha Senha
                 </label>
             </div>
