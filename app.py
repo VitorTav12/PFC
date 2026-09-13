@@ -161,9 +161,9 @@ def login():
 def pais():
     if current_user.nivel_acesso != 'pais':
         flash('Acesso restrito aos responsáveis.', 'warning')
-        return redirect(url_for('secretaria'))
-        
-    return render_template("pais.html")
+        return redirect(url_for('login'))
+    responsavel = Responsavel.query.filter_by(usuario_id=current_user.id).first()
+    return render_template('pais.html', responsavel=responsavel)
 
 @app.route('/secretaria')
 @login_required
@@ -241,19 +241,16 @@ def cadastrar_responsavel():
 @app.route('/aluno/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_aluno():
-    # Valida se quem está acessando tem permissão da secretaria ou diretoria
     if current_user.nivel_acesso not in ['secretaria', 'diretoria']:
         flash('Acesso não autorizado.', 'danger')
         return redirect(url_for('login'))
 
-    # Rota que processa o envio do formulário (POST)
     if request.method == 'POST':
         nome = request.form.get('nome')
         turma = request.form.get('turma')
         numero_matricula = request.form.get('numero_matricula')
         responsavel_id = request.form.get('responsavel_id')
 
-        # Instancia o Aluno com base nas colunas do banco (sccp_db)
         novo_aluno = Aluno(
             nome=nome,
             turma=turma,
@@ -267,7 +264,6 @@ def cadastrar_aluno():
         flash(f'Aluno {nome} cadastrado com sucesso!', 'success')
         return redirect(url_for('secretaria'))
 
-    # Rota que apenas acessa/renderiza a página do formulário (GET)
     responsaveis = Responsavel.query.all()
     return render_template('aluno_cadastro.html', responsaveis=responsaveis)
 
