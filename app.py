@@ -231,6 +231,39 @@ def cadastrar_responsavel():
         flash('Erro ao realizar o cadastro. Tente novamente.', 'danger')
         return redirect(url_for('tela_cadastro_responsavel'))
 
+@app.route('/aluno/cadastrar', methods=['GET', 'POST'])
+@login_required
+def cadastrar_aluno():
+    # Valida se quem está acessando tem permissão da secretaria ou diretoria
+    if current_user.nivel_acesso not in ['secretaria', 'diretoria']:
+        flash('Acesso não autorizado.', 'danger')
+        return redirect(url_for('login'))
+
+    # Rota que processa o envio do formulário (POST)
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        turma = request.form.get('turma')
+        numero_matricula = request.form.get('numero_matricula')
+        responsavel_id = request.form.get('responsavel_id')
+
+        # Instancia o Aluno com base nas colunas do banco (sccp_db)
+        novo_aluno = Aluno(
+            nome=nome,
+            turma=turma,
+            numero_matricula=numero_matricula,
+            responsavel_id=responsavel_id
+        )
+
+        db.session.add(novo_aluno)
+        db.session.commit()
+
+        flash(f'Aluno {nome} cadastrado com sucesso!', 'success')
+        return redirect(url_for('secretaria'))
+
+    # Rota que apenas acessa/renderiza a página do formulário (GET)
+    responsaveis = Responsavel.query.all()
+    return render_template('aluno_cadastro.html', responsaveis=responsaveis)
+
 @app.route('/logout')
 @login_required
 def logout():
