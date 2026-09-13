@@ -174,6 +174,63 @@ def secretaria():
 
     return render_template("secretaria.html")
 
+@app.route('/secretaria/cadastrar-responsavel')
+@login_required
+def tela_cadastro_responsavel():
+    if current_user.nivel_acesso not in ['diretoria', 'secretaria']:
+        flash('Acesso não autorizado.', 'danger')
+        return redirect(url_for('login'))
+
+    return render_template('pais_cadastro.html')
+
+@app.route('/secretaria/cadastrar-responsavel', methods=['POST'])
+@login_required
+def cadastrar_responsavel():
+    if current_user.nivel_acesso not in ['diretoria', 'secretaria']:
+        flash('Acesso não autorizado.', 'danger')
+        return redirect(url_for('login'))
+
+    nome = request.form.get('nome')
+    email = request.form.get('email')
+    senha = request.form.get('senha')
+
+    if Usuario.query.filter_by(email=email).first():
+        flash('Erro: Este e-mail já está cadastrado no sistema!', 'warning')
+        return redirect(url_for('tela_cadastro_responsavel'))
+
+    try:
+        novo_usuario = Usuario(
+            nome=nome,
+            email=email,
+            nivel_acesso='pais'
+        )
+        novo_usuario.set_senha(senha)
+        db.session.add(novo_usuario)
+        db.session.flush() 
+
+        novo_responsavel = Responsavel(
+            usuario_id=novo_usuario.id,
+            nome=nome,
+            email_pessoal=email
+        )
+        db.session.add(novo_responsavel)
+
+        registrar_log(
+            usuario_id=current_user.id,
+            acao='CADASTRO_RESPONSAVEL',
+            detalhes=f"Cadastrou o responsável '{nome}'"
+        )
+
+        db.session.commit()
+
+        flash(f'Responsável {nome} cadastrado com sucesso!', 'success')
+        return redirect(url_for('secretaria'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao realizar o cadastro. Tente novamente.', 'danger')
+        return redirect(url_for('tela_cadastro_responsavel'))
+
 @app.route('/logout')
 @login_required
 def logout():

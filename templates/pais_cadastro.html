@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+            <a href="/secretaria">Secretaria</a>
+            <a href="/logout">sair</a>
+            <a href="/secretaria/cadastrar-responsavel">Cadastrar Responsável</a>
+    </header>
+   
+    <form method="POST" action="/secretaria/cadastrar-responsavel">
+
+    <h1>Cadastro de Responsável</h1>
+
+    <div class="input-box">
+        <input placeholder="Nome Completo" type="text" name="nome" required>
+    </div>
+
+    <div class="input-box">
+        <input placeholder="E-mail de Acesso" type="email" name="email" required>
+    </div>
+
+    <div class="input-box">
+        <input placeholder="Senha Inicial" type="password" name="senha" required>
+    </div>
+
+    <button type="submit">Cadastrar Responsável</button>
+</form> 
+</body>
+</html>
