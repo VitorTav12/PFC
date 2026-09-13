@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS "autorizado" (
 	"id" SERIAL,
 	"responsavel_id" INTEGER NOT NULL,
 	"nome" VARCHAR(150) NOT NULL,
-	"grau_parental" VARCHAR(50) NOT NULL,
+	"grau_parentesco" VARCHAR(50) NOT NULL,
 	"foto" TEXT NOT NULL,
 	"criado_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("id")
