@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -15,16 +16,21 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-login_manager.login_message = "Por favor, faça login para acessar esta página."
+login_message = "Por favor, faça login para acessar esta página."
 login_manager.login_message_category = "warning"
 
 class Usuario(UserMixin, db.Model):
-    __tablename__ = 'Usuarios'
+    __tablename__ = 'usuario'
 
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String, nullable=False, unique=True)
+    nome = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
     senha = db.Column(db.String(255), nullable=False)
-    Nivel_de_acesso = db.Column(db.String(20), nullable=False)
+    nivel_acesso = db.Column(db.String(20), nullable=False) # 'secretaria', 'diretoria', 'pais'
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+    responsavel = db.relationship('Responsavel', backref='usuario', uselist=False, cascade="all, delete-orphan")
+    logs = db.relationship('AuditoriaLog', backref='usuario')
 
     def set_senha(self, senha_texto_puro):
         self.senha = generate_password_hash(senha_texto_puro)
@@ -37,9 +43,75 @@ class Usuario(UserMixin, db.Model):
         except Exception:
             return False
 
+class Responsavel(db.Model):
+    __tablename__ = 'responsavel'
+
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), unique=True, nullable=False)
+    nome = db.Column(db.String(150), nullable=False)
+    email_pessoal = db.Column(db.String(255), nullable=False)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+    alunos = db.relationship('Aluno', backref='responsavel')
+    autorizados = db.relationship('Autorizado', backref='responsavel', cascade="all, delete-orphan")
+
+class Aluno(db.Model):
+    __tablename__ = 'aluno'
+
+    id = db.Column(db.Integer, primary_key=True)
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'), nullable=False)
+    nome = db.Column(db.String(150), nullable=False)
+    turma = db.Column(db.String(50), nullable=False)
+    numero_matricula = db.Column(db.String(50), unique=True, nullable=False)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+    movimentacoes = db.relationship('Movimentacao', backref='aluno')
+
+class Autorizado(db.Model):
+    __tablename__ = 'autorizado'
+
+    id = db.Column(db.Integer, primary_key=True)
+    responsavel_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'), nullable=False)
+    nome = db.Column(db.String(150), nullable=False)
+    grau_parental = db.Column(db.String(50), nullable=False)
+    foto = db.Column(db.Text, nullable=False)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Movimentacao(db.Model):
+    __tablename__ = 'movimentacao'
+
+    id = db.Column(db.Integer, primary_key=True)
+    aluno_id = db.Column(db.Integer, db.ForeignKey('aluno.id'), nullable=False)
+    data = db.Column(db.Date, default=datetime.utcnow().date, nullable=False)
+    horario = db.Column(db.Time, default=datetime.utcnow().time, nullable=False)
+    responsavel_retirou_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'), nullable=True)
+    autorizado_retirou_id = db.Column(db.Integer, db.ForeignKey('autorizado.id'), nullable=True)
+
+    responsavel_retirou = db.relationship('Responsavel')
+    autorizado_retirou = db.relationship('Autorizado')
+
+class AuditoriaLog(db.Model):
+    __tablename__ = 'auditoria_log'
+
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    acao = db.Column(db.String(50), nullable=False)
+    detalhes = db.Column(db.Text, nullable=False)
+    data_horario = db.Column(db.DateTime, default=datetime.utcnow)
+
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
+
+def registrar_log(usuario_id, acao, detalhes):
+    """Grava um registro na tabela auditoria_log para conformidade LGPD"""
+    try:
+        log = AuditoriaLog(usuario_id=usuario_id, acao=acao, detalhes=detalhes)
+        db.session.add(log)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erro ao salvar auditoria: {e}")
 
 @app.route('/status')
 def status_banco():
@@ -52,8 +124,10 @@ def status_banco():
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        if current_user.Nivel_de_acesso == 'diretor':
+        if current_user.nivel_acesso in ['diretoria', 'secretaria']:
             return redirect(url_for('secretaria'))
+        elif current_user.nivel_acesso == 'pais':
+            return redirect(url_for('pais'))
 
     if request.method == 'POST':
         email_input = request.form.get('email')
@@ -61,31 +135,40 @@ def login():
 
         usuario = Usuario.query.filter_by(email=email_input).first()
 
-        if not usuario:
+        if not usuario or not usuario.checar_senha(senha_input):
             flash('E-mail ou senha inválidos!', 'danger')
             return render_template('login.html')
 
-        if usuario.checar_senha(senha_input):
-            if usuario.Nivel_de_acesso == 'diretor':
-                login_user(usuario)
-                flash('Login de Direção efetuado!', 'success')
-                return redirect(url_for('secretaria'))
-            else:
-                flash('Nesta fase, apenas a Direção tem acesso.', 'warning')
-                return redirect(url_for('login'))
-        else:
-            flash('E-mail ou senha inválidos!', 'danger')
+        login_user(usuario)
+        
+        registrar_log(
+            usuario_id=usuario.id,
+            acao='LOGIN_SUCESSO',
+            detalhes=f"Usuário '{usuario.nome}' ({usuario.nivel_acesso}) realizou login."
+        )
+
+        if usuario.nivel_acesso in ['diretoria', 'secretaria']:
+            flash(f'Bem-vindo(a), {usuario.nome}!', 'success')
+            return redirect(url_for('secretaria'))
+        elif usuario.nivel_acesso == 'pais':
+            flash(f'Bem-vindo(a), {usuario.nome}!', 'success')
+            return redirect(url_for('pais'))
 
     return render_template('login.html')
 
 @app.route('/pais')
+@login_required
 def pais():
+    if current_user.nivel_acesso != 'pais':
+        flash('Acesso restrito aos responsáveis.', 'warning')
+        return redirect(url_for('secretaria'))
+        
     return render_template("pais.html")
 
 @app.route('/secretaria')
 @login_required
 def secretaria():
-    if current_user.Nivel_de_acesso != 'diretor':
+    if current_user.nivel_acesso not in ['diretoria', 'secretaria']:
         flash('Acesso não autorizado.', 'danger')
         return redirect(url_for('login'))
 
@@ -94,6 +177,11 @@ def secretaria():
 @app.route('/logout')
 @login_required
 def logout():
+    registrar_log(
+        usuario_id=current_user.id,
+        acao='LOGOUT',
+        detalhes=f"Usuário '{current_user.nome}' encerrou a sessão."
+    )
     logout_user()
     flash('Sessão encerrada.', 'info')
     return redirect(url_for('login'))
