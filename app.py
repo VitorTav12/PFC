@@ -73,8 +73,7 @@ class Autorizado(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     responsavel_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'), nullable=False)
     nome = db.Column(db.String(150), nullable=False)
-    grau_parental = db.Column(db.String(50), nullable=False)
-    foto = db.Column(db.Text, nullable=False)
+    grau_parentesco = db.Column(db.String(50), nullable=False) 
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Movimentacao(db.Model):
@@ -160,10 +159,64 @@ def login():
 @login_required
 def pais():
     if current_user.nivel_acesso != 'pais':
-        flash('Acesso restrito aos responsáveis.', 'warning')
+        flash('Acesso não autorizado.', 'danger')
         return redirect(url_for('login'))
+
     responsavel = Responsavel.query.filter_by(usuario_id=current_user.id).first()
-    return render_template('pais.html', responsavel=responsavel)
+    if not responsavel:
+        flash('Perfil de responsável não encontrado.', 'danger')
+        return redirect(url_for('login'))
+
+    alunos = Aluno.query.filter_by(responsavel_id=responsavel.id).all()
+    
+    autorizados = Autorizado.query.filter_by(responsavel_id=responsavel.id).all()
+
+    return render_template('pais.html', responsavel=responsavel, alunos=alunos, autorizados=autorizados)
+
+@app.route('/pais/autorizado/cadastrar', methods=['GET', 'POST'])
+@login_required
+def cadastrar_autorizado():
+    if current_user.nivel_acesso != 'pais':
+        flash('Acesso não autorizado.', 'danger')
+        return redirect(url_for('login'))
+
+    responsavel = Responsavel.query.filter_by(usuario_id=current_user.id).first()
+
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        grau_parentesco = request.form.get('grau_parentesco')
+        # Se você estiver salvando foto ou texto, pode capturar aqui também
+
+        novo_autorizado = Autorizado(
+            responsavel_id=responsavel.id,
+            nome=nome,
+            grau_parentesco=grau_parentesco
+        )
+
+        db.session.add(novo_autorizado)
+        db.session.commit()
+
+        flash('Autorizado cadastrado com sucesso!', 'success')
+        return redirect(url_for('pais'))
+
+    return render_template('autorizado_cadastro.html')
+
+@app.route('/pais/autorizado/remover/<int:id>', methods=['POST'])
+@login_required
+def remover_autorizado(id):
+    if current_user.nivel_acesso != 'pais':
+        flash('Acesso não autorizado.', 'danger')
+        return redirect(url_for('login'))
+
+    responsavel = Responsavel.query.filter_by(usuario_id=current_user.id).first()
+
+    autorizado = Autorizado.query.filter_by(id=id, responsavel_id=responsavel.id).first_or_404()
+
+    db.session.delete(autorizado)
+    db.session.commit()
+
+    flash('Autorizado removido com sucesso!', 'success')
+    return redirect(url_for('pais'))
 
 @app.route('/secretaria')
 @login_required
