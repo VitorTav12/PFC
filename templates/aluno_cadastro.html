@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form method="POST" action="/aluno/cadastrar">
+
+        <h1>Cadastro do Aluno</h1>
+
+        <div class="input-box">
+            <input placeholder="Nome do aluno" type="text" name="nome" required id="nome">
+        </div>
+
+        <div class="input-box">
+            <input placeholder="Numero de matricula" type="text" name="numero_matricula" required id="numero_matricula">
+        </div>
+
+        <div class="input-box">
+            <input placeholder="Turma" type="text" name="turma" required id="turma">
+        </div>
+
+        <div class="mb-3">
+            <label for="responsavel_id" class="form-label">Responsável</label>
+            <select class="form-select" id="responsavel_id" name="responsavel_id" required>
+                <option value="" selected disabled>Selecione o responsável...</option>
+                {% for resp in responsaveis %}
+                <option value="{{ resp.id }}">{{ resp.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Cadastrar Aluno</button>
+    </form>
+
+</body>
+
+</html>
