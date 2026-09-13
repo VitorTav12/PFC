@@ -168,11 +168,18 @@ def pais():
 @app.route('/secretaria')
 @login_required
 def secretaria():
-    if current_user.nivel_acesso not in ['diretoria', 'secretaria']:
+    if current_user.nivel_acesso not in ['secretaria', 'diretoria']:
         flash('Acesso não autorizado.', 'danger')
         return redirect(url_for('login'))
 
-    return render_template("secretaria.html")
+    termo_busca = request.args.get('busca', '')
+
+    if termo_busca:
+        alunos = Aluno.query.filter(Aluno.nome.ilike(f'%{termo_busca}%')).all()
+    else:
+        alunos = Aluno.query.all()
+
+    return render_template('secretaria.html', alunos=alunos, termo_busca=termo_busca)
 
 @app.route('/secretaria/cadastrar-responsavel')
 @login_required
