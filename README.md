@@ -17,6 +17,18 @@
    pip install -r requirements.txt
    ```
 
+3. Crie o arquivo `.env` a partir do exemplo e preencha os valores (chave secreta e senha do banco):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Para gerar a `SECRET_KEY`:
+
+   ```bash
+   python -c "import secrets; print(secrets.token_hex(32))"
+   ```
+
 ## Subindo o ambiente
 
 1. Construa e suba os containers:
@@ -37,8 +49,15 @@
    docker compose up
    ```
 
-## Estrutura básica de uso
+## Estrutura do projeto (MVC)
 
+- `run.py` — ponto de entrada da aplicação.
+- `config.py` — configurações lidas do `.env`.
+- `app/models/` — **Model**: classes do banco (SQLAlchemy) e regras de negócio.
+- `app/controllers/` — **Controller**: rotas separadas por perfil (Blueprints `auth`, `responsavel` e `secretaria`).
+- `app/templates/` — **View**: páginas HTML (Jinja2 + Bootstrap).
+- `app/static/` — arquivos estáticos (CSS).
+- `uploads/` — fotos dos autorizados (fora do GitHub e fora da pasta pública).
 - `requirements.txt` — dependências Python do projeto.
 - `bd.sql` — script de criação/carga inicial do banco de dados.
 - `docker-compose.yml` — definição dos serviços (aplicação, banco de dados, etc).
@@ -59,5 +78,5 @@ docker compose down -v
 
 ## Observações
 
-- O usuário do banco configurado é `admin` e o banco de dados é `sccp_db`.
+- Usuário, senha e nome do banco ficam no `.env` (padrão do exemplo: usuário `admin` e banco `sccp_db`).
 - Certifique-se de que a porta configurada para o banco não esteja em uso por outro serviço local antes de subir os containers.

@@ -7,12 +7,21 @@
 </head>
 <body>
     <header>
-            <a href="/secretaria">Secretaria</a>
-            <a href="/logout">sair</a>
-            <a href="/secretaria/cadastrar-responsavel">Cadastrar Responsável</a>
+            <a href="{{ url_for('secretaria.painel') }}">Secretaria</a>
+            <a href="{{ url_for('auth.logout') }}">sair</a>
+            <a href="{{ url_for('secretaria.tela_cadastro_responsavel') }}">Cadastrar Responsável</a>
     </header>
    
-    <form method="POST" action="/secretaria/cadastrar-responsavel">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('secretaria.cadastrar_responsavel') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
     <h1>Cadastro de Responsável</h1>
 

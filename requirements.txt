@@ -1,6 +1,9 @@
 Flask
 Flask-SQLAlchemy
 Flask-Login
+Flask-WTF
 psycopg2-binary
+psycopg[binary]
+python-dotenv
 Werkzeug
 pytest
