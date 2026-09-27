@@ -12,11 +12,10 @@ from app.models.codigo_2fa import VALIDADE_CODIGO, MAX_TENTATIVAS
 auth_bp = Blueprint('auth', __name__)
 
 def pagina_inicial(usuario):
-    if usuario.nivel_acesso in ['diretoria', 'secretaria']:
+    if usuario.nivel_acesso == 'diretoria':
+        return url_for('diretoria.painel')
+    if usuario.nivel_acesso == 'secretaria':
         return url_for('secretaria.painel')
-    if usuario.nivel_acesso == 'pais':
-        return url_for('responsavel.painel')
-    return None
 
 
 def enviar_codigo_2fa(usuario):
