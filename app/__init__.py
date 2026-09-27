@@ -30,11 +30,13 @@ def create_app(config_class=Config):
     from app.controllers.responsavel_controller import responsavel_bp
     from app.controllers.secretaria_controller import secretaria_bp
     from app.controllers.lgpd_controller import lgpd_bp
+    from app.controllers.diretoria_controller import diretoria_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(responsavel_bp)
     app.register_blueprint(secretaria_bp)
     app.register_blueprint(lgpd_bp)
+    app.register_blueprint(diretoria_bp)
 
     from app.comandos import registrar_comandos
     registrar_comandos(app)
