@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "movimentacao" (
 
 CREATE TABLE IF NOT EXISTS "auditoria_log" (
 	"id" SERIAL,
-	"usuario_id" INTEGER NOT NULL,
+	"usuario_id" INTEGER,
 	"acao" VARCHAR(50) NOT NULL,
 	"detalhes" TEXT NOT NULL,
 	"data_horario" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -66,6 +66,16 @@ CREATE TABLE IF NOT EXISTS "aceite_termo" (
 	"usuario_id" INTEGER NOT NULL,
 	"versao" VARCHAR(20) NOT NULL,
 	"aceito_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY("id")
+);
+
+CREATE TABLE IF NOT EXISTS "token_recuperacao" (
+	"id" SERIAL,
+	"usuario_id" INTEGER NOT NULL,
+	"token_hash" VARCHAR(64) NOT NULL UNIQUE,
+	"expira_em" TIMESTAMP NOT NULL,
+	"usado_em" TIMESTAMP,
+	"criado_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("id")
 );
 
@@ -108,3 +118,8 @@ ALTER TABLE "aceite_termo"
 	ADD CONSTRAINT "fk_aceite_usuario" 
 	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
 	ON UPDATE NO ACTION ON DELETE RESTRICT;
+
+ALTER TABLE "token_recuperacao" 
+	ADD CONSTRAINT "fk_token_usuario" 
+	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
+	ON UPDATE NO ACTION ON DELETE CASCADE;

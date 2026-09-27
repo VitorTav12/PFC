@@ -7,8 +7,7 @@ class AuditoriaLog(db.Model):
     __tablename__ = 'auditoria_log'
 
     id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-    acao = db.Column(db.String(50), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=True)    acao = db.Column(db.String(50), nullable=False)
     detalhes = db.Column(db.Text, nullable=False)
     data_horario = db.Column(db.DateTime, default=datetime.now)
 
