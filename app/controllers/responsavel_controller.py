@@ -88,7 +88,6 @@ def cadastrar_autorizado():
 def foto_autorizado(id):
     responsavel = buscar_responsavel()
 
-    # só o responsável que cadastrou consegue ver a foto
     autorizado = Autorizado.query.filter_by(id=id, responsavel_id=responsavel.id).first_or_404()
     return send_from_directory(current_app.config['UPLOAD_FOLDER'], autorizado.foto)
 

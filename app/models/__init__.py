@@ -6,3 +6,4 @@ from app.models.movimentacao import Movimentacao
 from app.models.auditoria_log import AuditoriaLog
 from app.models.aceite_termo import AceiteTermo
 from app.models.token_recuperacao import TokenRecuperacao
+from app.models.email_brevo import EmailBrevo

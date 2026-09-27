@@ -24,3 +24,8 @@ class Config:
     REMEMBER_COOKIE_SAMESITE = 'Lax'
     REMEMBER_COOKIE_SECURE = os.getenv('COOKIE_SECURE') == '1'
     REMEMBER_COOKIE_DURATION = timedelta(days=30)  
+
+    BREVO_API_KEY = os.getenv('BREVO_API_KEY')
+    BREVO_API_URL = os.getenv('BREVO_API_URL', 'https://api.brevo.com/v3/smtp/email')
+    EMAIL_REMETENTE = os.getenv('EMAIL_REMETENTE')
+    EMAIL_REMETENTE_NOME = os.getenv('EMAIL_REMETENTE_NOME', 'Portal de Controle de Saída')

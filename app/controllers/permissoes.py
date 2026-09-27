@@ -5,7 +5,6 @@ from flask_login import current_user
 
 
 def perfil_requerido(*perfis):
-    # Usar sempre abaixo do @login_required
     def decorador(view):
         @wraps(view)
         def wrapper(*args, **kwargs):
