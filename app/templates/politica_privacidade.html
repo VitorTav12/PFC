@@ -64,6 +64,12 @@
                             <td>Gerados quando o próprio usuário pede a recuperação</td>
                         </tr>
                         <tr>
+                            <td>Funcionários da escola</td>
+                            <td>Códigos de verificação do login em duas etapas: guardados apenas como código
+                                criptográfico, valem 10 minutos e só podem ser usados uma vez</td>
+                            <td>Gerados a cada login da secretaria ou da direção</td>
+                        </tr>
+                        <tr>
                             <td>Criança e quem a retirou</td>
                             <td>Data, horário e pessoa que retirou a criança</td>
                             <td>Registrados pela escola no momento da saída</td>
@@ -119,6 +125,13 @@
                             <td>Execução de contrato (art. 7º, V)</td>
                         </tr>
                         <tr>
+                            <td>Proteger as contas da equipe da escola, que acessam dados de todas as crianças, com um
+                                segundo fator de autenticação</td>
+                            <td>Nome, e-mail e código de verificação do funcionário</td>
+                            <td>Legítimo interesse da escola (art. 7º, IX) e dever de adotar medidas de segurança
+                                (art. 46)</td>
+                        </tr>
+                        <tr>
                             <td>Comprovar que o responsável conheceu e aceitou estes documentos</td>
                             <td>Versão, data e hora do aceite</td>
                             <td>Exercício regular de direitos (art. 7º, VI)</td>
@@ -148,9 +161,10 @@
 
             <h2 class="h5 mt-4">6. Compartilhamento e serviços externos</h2>
             <p>O portal usa um único serviço externo: o <strong>Brevo</strong>, plataforma de envio de e-mails, usada
-                somente para entregar o link de recuperação de senha quando o próprio usuário pede.</p>
+                somente para entregar o link de recuperação de senha, quando o próprio usuário pede, e o código de
+                verificação do login em duas etapas da equipe da escola.</p>
             <ul>
-                <li><strong>Dados enviados:</strong> nome e e-mail do usuário e o link temporário de recuperação.</li>
+                <li><strong>Dados enviados:</strong> nome e e-mail do usuário e o link ou código temporário.</li>
                 <li><strong>Dados que não são enviados:</strong> nenhum dado de crianças, de autorizados, fotos ou
                     registros de retirada.</li>
                 <li><strong>Transferência internacional:</strong> o serviço pode processar esses dados fora do Brasil.
@@ -196,6 +210,11 @@
                             <td>Excluídos</td>
                         </tr>
                         <tr>
+                            <td>Códigos de verificação do login</td>
+                            <td>10 minutos, até o primeiro uso ou até 5 tentativas erradas</td>
+                            <td>Deixam de funcionar; o registro do login segue o prazo dos registros de auditoria</td>
+                        </tr>
+                        <tr>
                             <td>Registro de aceite destes documentos</td>
                             <td>Até 5 anos após o encerramento da conta, para comprovação</td>
                             <td>Excluídos</td>
@@ -220,7 +239,8 @@
                 publicidade ou de análise.</p>
 
             <h2 class="h5 mt-4">10. Segurança e incidentes</h2>
-            <p>Adotamos medidas como senhas armazenadas apenas de forma criptografada, controle de acesso por perfil
+            <p>Adotamos medidas como senhas armazenadas apenas de forma criptografada, verificação em duas etapas no
+                login da equipe da escola, controle de acesso por perfil
                 verificado no servidor, proteção dos formulários contra envios falsos, fotos guardadas fora da área
                 pública e registro de auditoria das ações relevantes.</p>
             <p>Se ocorrer um incidente de segurança com risco ou dano relevante aos titulares, a escola avaliará o caso

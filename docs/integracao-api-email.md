@@ -2,9 +2,12 @@
 
 ## 1. Objetivo
 
-O Portal de Controle de Saída consome a API de e-mails transacionais do **Brevo** para enviar o link de
-**recuperação de senha** ao usuário que esqueceu a senha. O e-mail é o canal que comprova que a pessoa que
-pede a nova senha é a dona da conta, sem que a escola precise conhecer ou redefinir a senha manualmente.
+O Portal de Controle de Saída consome a API de e-mails transacionais do **Brevo** para dois usos:
+
+- enviar o link de **recuperação de senha** ao usuário que esqueceu a senha. O e-mail é o canal que comprova que
+  a pessoa que pede a nova senha é a dona da conta, sem que a escola precise conhecer ou redefinir a senha;
+- enviar o **código de verificação em duas etapas (2FA)** no login da secretaria e da direção, perfis que
+  acessam dados de todas as crianças.
 
 ## 2. Dados da API
 
@@ -23,8 +26,9 @@ pede a nova senha é a dona da conta, sem que a escola precise conhecer ou redef
 |---|---|---|
 | Model | `app/models/email_brevo.py` | Monta a requisição, chama a API e trata as respostas e falhas |
 | Model | `app/models/token_recuperacao.py` | Gera o token, guarda só o hash, controla validade e uso único |
-| Controller | `app/controllers/auth_controller.py` | Rotas `/esqueci-senha` e `/redefinir-senha/<token>` |
-| View | `app/templates/emails/recuperacao_senha.html` | Corpo do e-mail enviado |
+| Model | `app/models/codigo_2fa.py` | Gera o código de 6 dígitos, guarda só o HMAC, controla validade, uso único e tentativas
+| Controller | `app/controllers/auth_controller.py` | Rotas `/esqueci-senha`, `/redefinir-senha/<token>` e `/verificar-codigo` |
+| View | `app/templates/emails/recuperacao_senha.html` e `codigo_2fa.html` | Corpo dos e-mails enviados |
 | View | `app/templates/esqueci_senha.html` e `redefinir_senha.html` | Telas do fluxo |
 
 O acesso à API externa fica na camada Model pelo mesmo motivo que o acesso ao banco de dados: o Model é
@@ -46,6 +50,19 @@ e decide o que mostrar ao usuário.
    expirado ou já tiver sido usado, o link é recusado e a tentativa é registrada.
 5. Com o link válido, o usuário cria a nova senha, o token é marcado como usado e a ação
    `RECUPERACAO_CONCLUIDA` é registrada.
+
+### 4.1 Verificação em duas etapas (2FA)
+
+1. Secretaria ou direção informa e-mail e senha corretos. **O login ainda não é concluído.**
+2. O sistema invalida códigos anteriores, gera um código de 6 dígitos com `secrets.randbelow`, guarda apenas o
+   **HMAC-SHA256** do código (chave: `SECRET_KEY`), com validade de 10 minutos, e envia o código pela API.
+3. O usuário digita o código em `/verificar-codigo`. Acertando, o código é marcado como usado e o login é
+   concluído (`2FA_VALIDADO` e `LOGIN_SUCESSO`). Errando, a tentativa é contada (`2FA_FALHA`); na 5ª tentativa
+   errada o código é bloqueado e é preciso fazer login de novo.
+4. É possível pedir um novo código, no máximo um por minuto.
+
+Limitação conhecida: o código por e-mail depende da segurança da caixa de e-mail do usuário. Aplicativos
+autenticadores (TOTP) são considerados mais fortes e ficam como evolução do projeto.
 
 ## 5. Exemplo de requisição
 
@@ -95,11 +112,12 @@ Depois de alterar o `.env`, é preciso recriar o container: `docker compose up -
 - Validade curta (30 minutos), uso único e invalidação dos links anteriores a cada novo pedido.
 - Resposta idêntica para e-mails cadastrados e não cadastrados.
 - Todas as etapas ficam registradas na auditoria: `RECUPERACAO_SOLICITADA`, `RECUPERACAO_EMAIL_DESCONHECIDO`,
-  `RECUPERACAO_EMAIL_FALHOU`, `RECUPERACAO_LINK_INVALIDO` e `RECUPERACAO_CONCLUIDA`.
+  `RECUPERACAO_EMAIL_FALHOU`, `RECUPERACAO_LINK_INVALIDO`, `RECUPERACAO_CONCLUIDA`, `2FA_CODIGO_ENVIADO`,
+  `2FA_VALIDADO`, `2FA_FALHA` e `2FA_EMAIL_FALHOU`.
 
 ## 9. LGPD
 
-Somente nome, e-mail e o link temporário são enviados ao Brevo. Nenhum dado de crianças, autorizados, fotos
+Somente nome, e-mail e o link ou código temporário são enviados ao Brevo. Nenhum dado de crianças, autorizados, fotos
 ou registros de retirada sai do sistema. O compartilhamento está descrito no item 6 da Política de
 Privacidade, disponível no próprio sistema.
 
