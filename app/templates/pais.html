@@ -14,7 +14,8 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ url_for('responsavel.painel') }}">Portal dos Pais</a>
             <div class="navbar-nav d-flex flex-row align-items-center">
-                <a class="nav-link text-success me-3" href="{{ url_for('responsavel.cadastrar_autorizado') }}">+ Adicionar
+                <a class="nav-link text-success me-3" href="{{ url_for('responsavel.cadastrar_autorizado') }}">+
+                    Adicionar
                     Autorizado</a>
                 <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Sair</a>
             </div>
@@ -71,7 +72,8 @@
                                     <span class="text-muted small">({{ aut.grau_parentesco }})</span>
                                 </div>
                                 <!-- Botão individual para remover o autorizado -->
-                                <form action="{{ url_for('responsavel.remover_autorizado', id=aut.id) }}" method="POST" class="m-0">
+                                <form action="{{ url_for('responsavel.remover_autorizado', id=aut.id) }}" method="POST"
+                                    class="m-0">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Deseja realmente remover este autorizado?')">Remover</button>
@@ -94,6 +96,7 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% include '_rodape_lgpd.html' %}
 </body>
 
 </html>

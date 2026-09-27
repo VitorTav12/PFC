@@ -20,7 +20,8 @@
             {% endif %}
             {% endwith %}
 
-            <form method="POST" action="{{ url_for('responsavel.cadastrar_autorizado') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('responsavel.cadastrar_autorizado') }}"
+                enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome Completo</label>
@@ -44,6 +45,7 @@
             </form>
         </div>
     </div>
+    {% include '_rodape_lgpd.html' %}
 </body>
 
 </html>

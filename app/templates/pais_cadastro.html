@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <header>
-            <a href="{{ url_for('secretaria.painel') }}">Secretaria</a>
-            <a href="{{ url_for('auth.logout') }}">sair</a>
-            <a href="{{ url_for('secretaria.tela_cadastro_responsavel') }}">Cadastrar Responsável</a>
+        <a href="{{ url_for('secretaria.painel') }}">Secretaria</a>
+        <a href="{{ url_for('auth.logout') }}">sair</a>
+        <a href="{{ url_for('secretaria.tela_cadastro_responsavel') }}">Cadastrar Responsável</a>
     </header>
-   
+
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     {% for category, message in messages %}
@@ -21,23 +23,25 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('secretaria.cadastrar_responsavel') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <h1>Cadastro de Responsável</h1>
+        <h1>Cadastro de Responsável</h1>
 
-    <div class="input-box">
-        <input placeholder="Nome Completo" type="text" name="nome" required>
-    </div>
+        <div class="input-box">
+            <input placeholder="Nome Completo" type="text" name="nome" required>
+        </div>
 
-    <div class="input-box">
-        <input placeholder="E-mail de Acesso" type="email" name="email" required>
-    </div>
+        <div class="input-box">
+            <input placeholder="E-mail de Acesso" type="email" name="email" required>
+        </div>
 
-    <div class="input-box">
-        <input placeholder="Senha Inicial" type="password" name="senha" required>
-    </div>
+        <div class="input-box">
+            <input placeholder="Senha Inicial" type="password" name="senha" required>
+        </div>
 
-    <button type="submit">Cadastrar Responsável</button>
-</form> 
+        <button type="submit">Cadastrar Responsável</button>
+    </form>
+    {% include '_rodape_lgpd.html' %}
 </body>
+
 </html>
