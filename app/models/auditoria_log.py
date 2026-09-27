@@ -12,7 +12,7 @@ class AuditoriaLog(db.Model):
     detalhes = db.Column(db.Text, nullable=False)
     data_horario = db.Column(db.DateTime, default=datetime.now)
 
-@staticmethod
-def registrar(usuario_id, acao, detalhes):
+    @staticmethod
+    def registrar(usuario_id, acao, detalhes):
         log = AuditoriaLog(usuario_id=usuario_id, acao=acao, detalhes=detalhes)
         db.session.add(log)
