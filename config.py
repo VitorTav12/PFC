@@ -10,6 +10,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
+    NOME_ESCOLA = os.getenv('NOME_ESCOLA', 'Creche Pequenos Girassóis')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = os.getenv('SQLALCHEMY_ECHO') == '1'
@@ -28,4 +29,4 @@ class Config:
     BREVO_API_KEY = os.getenv('BREVO_API_KEY')
     BREVO_API_URL = os.getenv('BREVO_API_URL', 'https://api.brevo.com/v3/smtp/email')
     EMAIL_REMETENTE = os.getenv('EMAIL_REMETENTE')
-    EMAIL_REMETENTE_NOME = os.getenv('EMAIL_REMETENTE_NOME', 'Portal de Controle de Saída')
+    EMAIL_REMETENTE_NOME = os.getenv('EMAIL_REMETENTE_NOME', NOME_ESCOLA)

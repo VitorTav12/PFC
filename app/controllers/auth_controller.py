@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from sqlalchemy import text
 
@@ -34,7 +34,7 @@ def enviar_codigo_2fa(usuario):
     html = render_template('emails/codigo_2fa.html', nome=usuario.nome, codigo=codigo, minutos=minutos)
     texto = (
         f"Olá, {usuario.nome}.\n\n"
-        f"Seu código de acesso ao Portal de Controle de Saída é: {codigo}\n"
+        f"Seu código de acesso ao portal da {current_app.config['NOME_ESCOLA']} é: {codigo}\n"
         f"Ele vale por {minutos} minutos e só pode ser usado uma vez.\n\n"
         "Se não foi você que tentou entrar, troque sua senha e avise a direção da escola."
     )
@@ -221,7 +221,7 @@ def esqueci_senha():
             html = render_template('emails/recuperacao_senha.html', nome=usuario.nome, link=link, minutos=minutos)
             texto = (
                 f"Olá, {usuario.nome}.\n\n"
-                f"Para criar uma nova senha no Portal de Controle de Saída, acesse o link abaixo "
+                f"Para criar uma nova senha no portal da {current_app.config['NOME_ESCOLA']}, acesse o link abaixo "
                 f"(válido por {minutos} minutos e para um único uso):\n{link}\n\n"
                 "Se você não pediu a recuperação, ignore este e-mail. Sua senha atual continua valendo."
             )

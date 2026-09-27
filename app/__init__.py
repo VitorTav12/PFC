@@ -51,4 +51,8 @@ def create_app(config_class=Config):
         flash('Arquivo muito grande. O limite é 5 MB.', 'warning')
         return redirect(request.referrer or url_for('auth.login'))
 
+    @app.context_processor
+    def dados_da_escola():
+        return {'nome_escola': app.config['NOME_ESCOLA']}
+
     return app

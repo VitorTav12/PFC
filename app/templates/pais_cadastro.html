@@ -12,7 +12,7 @@
 
     <header class="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow-sm mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('secretaria.painel') }}">Secretaria</a>
+            <a class="navbar-brand" href="{{ url_for('secretaria.painel') }}">{{ nome_escola }} · Secretaria</a>
             <div class="navbar-nav flex-row gap-3">
                 <a class="nav-link text-white" href="{{ url_for('secretaria.tela_cadastro_responsavel') }}">Cadastrar
                     Responsável</a>
