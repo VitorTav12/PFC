@@ -65,6 +65,7 @@
 - `uploads/` — fotos dos autorizados (fora do GitHub e fora da pasta pública).
 - `requirements.txt` — dependências Python do projeto.
 - `bd.sql` — script de criação/carga inicial do banco de dados.
+- `app/controllers/diretoria_controller.py` — painel da diretoria com indicadores e auditoria (acesso só da direção).
 - `docs/` — documentação técnica (integração com a API externa de e-mail).
 - `migracoes/` — alterações no banco para quem já tinha criado o banco com uma versão anterior do `bd.sql`.
 - `docker-compose.yml` — definição dos serviços (aplicação, banco de dados, etc).
