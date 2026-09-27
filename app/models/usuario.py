@@ -10,6 +10,8 @@ from app.extensions import db, login_manager
 
 from app.models.aceite_termo import VERSAO_TERMOS
 
+PERFIS_COM_2FA = ('secretaria', 'diretoria')
+
 
 class Usuario(UserMixin, db.Model):
     __tablename__ = 'usuario'
@@ -51,6 +53,13 @@ class Usuario(UserMixin, db.Model):
             return check_password_hash(self.senha, senha_digitada)
         except Exception:
             return False
+
+    def exige_2fa(self):
+        return self.nivel_acesso in PERFIS_COM_2FA
+
+    def email_mascarado(self):
+        nome, _, dominio = self.email.partition('@')
+        return f'{nome[:2]}***@{dominio}'
 
     def aceitou_termos_atuais(self):
         return any(aceite.versao == VERSAO_TERMOS for aceite in self.aceites)
