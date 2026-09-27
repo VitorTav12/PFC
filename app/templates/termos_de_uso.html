@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Termos de Uso</title>
+</head>
+
+<body class="bg-light">
+    <main class="container my-5" style="max-width: 820px;">
+        <div class="bg-white p-4 p-md-5 border rounded shadow-sm">
+            <h1 class="h3">Termos de Uso</h1>
+            <p class="text-secondary small">Versão {{ versao }} · Última atualização: 26/09/2026</p>
+
+            <h2 class="h5 mt-4">1. O que é o portal</h2>
+            <p>O Portal de Controle de Saída e Autorizados é um sistema web usado pela escola de educação infantil para
+                organizar quem pode retirar cada criança. Os responsáveis cadastram as pessoas autorizadas e a escola
+                consulta essas informações para conferir a identidade de quem vai buscar a criança.</p>
+            <p>O portal auxilia a conferência, mas não substitui a atenção da equipe da escola no momento da retirada.
+                Em caso de dúvida sobre a identidade de alguém, a escola pode e deve entrar em contato com o
+                responsável antes de liberar a criança.</p>
+
+            <h2 class="h5 mt-4">2. Quem pode usar</h2>
+            <ul>
+                <li><strong>Responsáveis legais</strong> pelas crianças matriculadas, com conta criada pela secretaria
+                    da escola. Não existe cadastro aberto pela internet.</li>
+                <li><strong>Funcionários da escola</strong> (secretaria e direção), cada um com acesso apenas às
+                    funções do seu perfil.</li>
+            </ul>
+
+            <h2 class="h5 mt-4">3. Conta e senha</h2>
+            <ul>
+                <li>A conta é pessoal e intransferível. Não compartilhe sua senha.</li>
+                <li>No primeiro acesso, o responsável deve criar uma senha própria, substituindo a senha inicial
+                    fornecida pela escola.</li>
+                <li>Se suspeitar que outra pessoa conhece sua senha, avise a secretaria da escola.</li>
+                <li>A opção "Lembrar minha senha" mantém o acesso no dispositivo por até 30 dias. Não a utilize em
+                    computadores compartilhados.</li>
+            </ul>
+
+            <h2 class="h5 mt-4">4. Responsabilidades do responsável</h2>
+            <ul>
+                <li>Cadastrar apenas pessoas que realmente estão autorizadas a retirar a criança e manter essa lista
+                    atualizada, removendo quem não tiver mais autorização.</li>
+                <li>Informar corretamente nome, grau de parentesco e uma foto recente de cada autorizado.</li>
+                <li>Avisar cada pessoa autorizada de que seus dados e sua foto serão cadastrados no portal para
+                    conferência de identidade pela escola, conforme a Política de Privacidade.</li>
+                <li>Não cadastrar fotos de terceiros que não sejam a própria pessoa autorizada.</li>
+            </ul>
+
+            <h2 class="h5 mt-4">5. Condutas proibidas</h2>
+            <ul>
+                <li>Tentar acessar dados de crianças, responsáveis ou autorizados que não estejam vinculados à sua
+                    conta.</li>
+                <li>Usar a conta de outra pessoa ou tentar contornar os controles de acesso.</li>
+                <li>Enviar arquivos que não sejam fotos do autorizado ou que contenham conteúdo impróprio.</li>
+            </ul>
+            <p>O uso indevido pode levar ao bloqueio da conta pela escola, sem prejuízo das medidas legais cabíveis.</p>
+
+            <h2 class="h5 mt-4">6. Disponibilidade</h2>
+            <p>A escola busca manter o portal disponível durante o horário letivo, mas podem ocorrer interrupções para
+                manutenção ou por falhas técnicas. Nesses casos, a retirada segue o procedimento manual da escola.</p>
+
+            <h2 class="h5 mt-4">7. Encerramento da conta</h2>
+            <p>A conta do responsável é encerrada quando termina o vínculo da criança com a escola, ou a pedido do
+                responsável junto à secretaria. O tratamento dos dados após o encerramento segue a Política de
+                Privacidade.</p>
+
+            <h2 class="h5 mt-4">8. Privacidade</h2>
+            <p>O tratamento de dados pessoais no portal é descrito na
+                <a href="{{ url_for('lgpd.politica_privacidade') }}">Política de Privacidade</a>. Estes Termos não
+                substituem a Política, nem retiram os direitos garantidos pela Lei nº 13.709/2018 (LGPD).
+            </p>
+
+            <h2 class="h5 mt-4">9. Alterações e legislação</h2>
+            <p>Mudanças relevantes nestes Termos geram uma nova versão, e o responsável deverá aceitá-la no próximo
+                acesso. Estes Termos são regidos pela legislação brasileira.</p>
+
+            <p class="small text-secondary mt-4 mb-0">Protótipo acadêmico desenvolvido como Projeto Final de Curso de
+                Engenharia de Software da Universidade de Mogi das Cruzes.</p>
+        </div>
+    </main>
+</body>
+
+</html>
