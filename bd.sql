@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS "usuario" (
 	PRIMARY KEY("id")
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS "idx_usuario_email_minusculo" ON "usuario" (LOWER("email"));
+
 CREATE TABLE IF NOT EXISTS "responsavel" (
 	"id" SERIAL,
 	"usuario_id" INTEGER NOT NULL UNIQUE,

@@ -13,7 +13,7 @@ def registrar_comandos(app):
     @click.password_option(prompt='Senha')
     def criar_usuario(nome, email, nivel_acesso, password):
         """Cria um usuário da secretaria ou da diretoria (responsáveis são cadastrados pelo sistema)."""
-        if Usuario.query.filter_by(email=email).first():
+        if Usuario.buscar_por_email(email):
             click.echo('Já existe um usuário com esse e-mail.')
             return
 

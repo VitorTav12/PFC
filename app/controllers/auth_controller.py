@@ -37,7 +37,7 @@ def login():
         email_input = request.form.get('email')
         senha_input = request.form.get('senha')
 
-        usuario = Usuario.query.filter_by(email=email_input).first()
+        usuario = Usuario.buscar_por_email(email_input)
 
         if not usuario or not usuario.checar_senha(senha_input):
             if usuario:
@@ -95,8 +95,7 @@ def logout():
 @auth_bp.route('/esqueci-senha', methods=['GET', 'POST'])
 def esqueci_senha():
     if request.method == 'POST':
-        email = (request.form.get('email') or '').strip()
-        usuario = Usuario.query.filter_by(email=email).first() if email else None
+        usuario = Usuario.buscar_por_email(request.form.get('email'))
 
         if usuario:
             token = TokenRecuperacao.gerar(usuario)

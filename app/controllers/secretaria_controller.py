@@ -1,3 +1,5 @@
+import email
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 
@@ -41,7 +43,7 @@ def cadastrar_responsavel():
         flash('Preencha nome, e-mail e senha.', 'warning')
         return redirect(url_for('secretaria.tela_cadastro_responsavel'))
 
-    if Usuario.query.filter_by(email=email).first():
+    if Usuario.buscar_por_email(email):
         flash('Erro: Este e-mail já está cadastrado no sistema!', 'warning')
         return redirect(url_for('secretaria.tela_cadastro_responsavel'))
 

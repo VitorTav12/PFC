@@ -1,9 +1,13 @@
 from datetime import datetime
 
 from flask_login import UserMixin
+
+from sqlalchemy.orm import validates
+
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db, login_manager
+
 from app.models.aceite_termo import VERSAO_TERMOS
 
 
@@ -21,6 +25,21 @@ class Usuario(UserMixin, db.Model):
     responsavel = db.relationship('Responsavel', backref='usuario', uselist=False, cascade="all, delete-orphan")
     logs = db.relationship('AuditoriaLog', backref='usuario')
     aceites = db.relationship('AceiteTermo', backref='usuario')
+
+    @validates('email')
+    def normalizar_email_ao_salvar(self, chave, valor):
+        return Usuario.normalizar_email(valor)
+
+    @staticmethod
+    def normalizar_email(email):
+        return (email or '').strip().lower()
+
+    @staticmethod
+    def buscar_por_email(email):
+        email = Usuario.normalizar_email(email)
+        if not email:
+            return None
+        return Usuario.query.filter_by(email=email).first()
 
     def set_senha(self, senha_texto_puro):
         self.senha = generate_password_hash(senha_texto_puro)
