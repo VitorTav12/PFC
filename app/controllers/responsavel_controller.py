@@ -8,6 +8,10 @@ from app.controllers.permissoes import perfil_requerido
 
 responsavel_bp = Blueprint('responsavel', __name__, url_prefix='/responsavel')
 
+@responsavel_bp.before_request
+def exigir_primeiro_acesso():
+    if current_user.is_authenticated and current_user.pendente_primeiro_acesso():
+        return redirect(url_for('lgpd.primeiro_acesso'))
 
 def buscar_responsavel():
     responsavel = current_user.responsavel

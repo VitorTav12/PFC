@@ -49,7 +49,8 @@ def cadastrar_responsavel():
         novo_usuario = Usuario(
             nome=nome,
             email=email,
-            nivel_acesso='pais'
+            nivel_acesso='pais',
+            precisa_trocar_senha=True
         )
         novo_usuario.set_senha(senha)
         db.session.add(novo_usuario)
@@ -69,7 +70,7 @@ def cadastrar_responsavel():
         )
         db.session.commit()
 
-        flash(f'Responsável {nome} cadastrado com sucesso!', 'success')
+        flash(f'Responsável {nome} cadastrado com sucesso! No primeiro acesso ele deverá trocar a senha e aceitar os termos.', 'success')
         return redirect(url_for('secretaria.painel'))
 
     except Exception:

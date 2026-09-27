@@ -43,11 +43,13 @@
    docker compose exec -T db psql -U admin -d sccp_db < bd.sql
    ```
 
-3. Nas execuções seguintes, basta subir os containers normalmente:
+3. Se o banco já existia antes de uma atualização do projeto, aplique as migrações da pasta `migracoes/` (uma única vez, em ordem):
 
-   ```bash
-   docker compose up
-   ```
+```bash
+   docker compose exec -T db psql -U admin -d sccp_db < migracoes/001_primeiro_acesso.sql
+```
+
+4. Nas execuções seguintes, basta subir os containers normalmente:
 
 ## Estrutura do projeto (MVC)
 
@@ -60,6 +62,7 @@
 - `uploads/` — fotos dos autorizados (fora do GitHub e fora da pasta pública).
 - `requirements.txt` — dependências Python do projeto.
 - `bd.sql` — script de criação/carga inicial do banco de dados.
+- `migracoes/` — alterações no banco para quem já tinha criado o banco com uma versão anterior do `bd.sql`.
 - `docker-compose.yml` — definição dos serviços (aplicação, banco de dados, etc).
 
 ## Parar o ambiente
