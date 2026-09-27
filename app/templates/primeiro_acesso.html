@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="h-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Primeiro acesso</title>
+</head>
+
+<body class="d-flex flex-column h-100 bg-light">
+
+    <main class="container my-auto" style="max-width: 560px;">
+        <div class="bg-white p-4 border rounded shadow-sm">
+            <h1 class="h4 mb-2">Primeiro acesso</h1>
+            <p class="text-secondary">Antes de usar o portal, precisamos de algumas confirmações.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} p-2 mb-3" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('lgpd.primeiro_acesso') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                {% if precisa_trocar_senha %}
+                <h2 class="h6 mt-3">1. Crie sua senha</h2>
+                <p class="small text-secondary">A senha inicial foi definida pela escola. Escolha uma senha pessoal,
+                    com pelo menos 8 caracteres, contendo letras e números.</p>
+
+                <div class="mb-3">
+                    <label for="nova_senha" class="form-label">Nova senha</label>
+                    <input class="form-control" type="password" name="nova_senha" id="nova_senha" minlength="8"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmacao" class="form-label">Confirme a nova senha</label>
+                    <input class="form-control" type="password" name="confirmacao" id="confirmacao" minlength="8"
+                        required>
+                </div>
+                {% endif %}
+
+                {% if precisa_aceitar %}
+                <h2 class="h6 mt-3">{% if precisa_trocar_senha %}2. {% endif %}Termos e privacidade</h2>
+                <p class="small text-secondary">Leia os documentos abaixo. Eles explicam como o portal funciona e
+                    como a escola trata os seus dados, os dados da criança e os dos autorizados.</p>
+                <ul class="small">
+                    <li><a href="{{ url_for('lgpd.termos_de_uso') }}" target="_blank">Termos de Uso (versão {{ versao
+                            }})</a></li>
+                    <li><a href="{{ url_for('lgpd.politica_privacidade') }}" target="_blank">Política de Privacidade
+                            (versão {{ versao }})</a></li>
+                </ul>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="aceite" value="sim" id="aceite" required>
+                    <label class="form-check-label" for="aceite">
+                        Li e aceito os Termos de Uso e a Política de Privacidade.
+                    </label>
+                </div>
+                {% endif %}
+
+                <button class="btn btn-primary w-100" type="submit">Confirmar e entrar</button>
+            </form>
+
+            <p class="small text-center mt-3 mb-0">
+                <a href="{{ url_for('auth.logout') }}" class="text-secondary">Não quero continuar agora (sair)</a>
+            </p>
+        </div>
+    </main>
+
+</body>
+
+</html>
