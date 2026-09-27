@@ -16,6 +16,9 @@ def pagina_inicial(usuario):
         return url_for('diretoria.painel')
     if usuario.nivel_acesso == 'secretaria':
         return url_for('secretaria.painel')
+    if usuario.nivel_acesso == 'pais':
+        return url_for('responsavel.painel')
+    return None
 
 
 def enviar_codigo_2fa(usuario):
