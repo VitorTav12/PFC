@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "usuario" (
 	"email" VARCHAR(255) NOT NULL UNIQUE,
 	"senha" VARCHAR(255) NOT NULL,
 	"nivel_acesso" VARCHAR(20) NOT NULL CHECK ("nivel_acesso" IN ('secretaria', 'diretoria', 'pais')),
+	"precisa_trocar_senha" BOOLEAN NOT NULL DEFAULT FALSE,
 	"criado_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY("id")
 );
@@ -60,6 +61,14 @@ CREATE TABLE IF NOT EXISTS "auditoria_log" (
 	PRIMARY KEY("id")
 );
 
+CREATE TABLE IF NOT EXISTS "aceite_termo" (
+	"id" SERIAL,
+	"usuario_id" INTEGER NOT NULL,
+	"versao" VARCHAR(20) NOT NULL,
+	"aceito_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY("id")
+);
+
 ALTER TABLE "responsavel" 
 	ADD CONSTRAINT "fk_responsavel_usuario" 
 	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
@@ -92,5 +101,10 @@ ALTER TABLE "movimentacao"
 
 ALTER TABLE "auditoria_log" 
 	ADD CONSTRAINT "fk_log_usuario" 
+	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
+	ON UPDATE NO ACTION ON DELETE RESTRICT;
+
+ALTER TABLE "aceite_termo" 
+	ADD CONSTRAINT "fk_aceite_usuario" 
 	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
 	ON UPDATE NO ACTION ON DELETE RESTRICT;
