@@ -47,6 +47,7 @@
 
 ```bash
    docker compose exec -T db psql -U admin -d sccp_db < migracoes/001_primeiro_acesso.sql
+   docker compose exec -T db psql -U admin -d sccp_db < migracoes/002_recuperacao_senha.sql
 ```
 
 4. Nas execuções seguintes, basta subir os containers normalmente:
@@ -62,6 +63,7 @@
 - `uploads/` — fotos dos autorizados (fora do GitHub e fora da pasta pública).
 - `requirements.txt` — dependências Python do projeto.
 - `bd.sql` — script de criação/carga inicial do banco de dados.
+- `docs/` — documentação técnica (integração com a API externa de e-mail).
 - `migracoes/` — alterações no banco para quem já tinha criado o banco com uma versão anterior do `bd.sql`.
 - `docker-compose.yml` — definição dos serviços (aplicação, banco de dados, etc).
 

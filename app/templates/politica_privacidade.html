@@ -17,7 +17,8 @@
             <h2 class="h5 mt-4">1. Quem é responsável pelos dados</h2>
             <p>Em uma implantação real, a <strong>controladora</strong> dos dados é a escola de educação infantil que
                 utiliza o portal, pois é ela quem decide por que e como os dados são tratados. A equipe que desenvolve e
-                hospeda o sistema atua como <strong>operadora</strong>, seguindo as instruções da escola.</p>
+                hospeda o sistema atua como <strong>operadora</strong>, seguindo as instruções da escola. O serviço
+                de envio de e-mails descrito no item 6 atua como suboperador.</p>
             <p>Dúvidas, pedidos e reclamações sobre privacidade podem ser feitos presencialmente na secretaria da escola
                 ou pelo e-mail do encarregado de dados: <strong>remartinslopes61@gmail.com</strong>.</p>
 
@@ -55,6 +56,12 @@
                             <td>Registros de acesso e de ações no sistema (quem fez, o quê, data e hora) e o registro
                                 de aceite destes documentos</td>
                             <td>Gerados automaticamente pelo sistema</td>
+                        </tr>
+                        <tr>
+                            <td>Todos os usuários</td>
+                            <td>Pedidos de recuperação de senha: o link enviado por e-mail é guardado apenas como código
+                                criptográfico (hash), vale por 30 minutos e só pode ser usado uma vez</td>
+                            <td>Gerados quando o próprio usuário pede a recuperação</td>
                         </tr>
                         <tr>
                             <td>Criança e quem a retirou</td>
@@ -107,6 +114,11 @@
                                 12.965/2014, art. 15)</td>
                         </tr>
                         <tr>
+                            <td>Permitir que o usuário recupere o acesso quando esquecer a senha</td>
+                            <td>Nome, e-mail e link temporário de recuperação</td>
+                            <td>Execução de contrato (art. 7º, V)</td>
+                        </tr>
+                        <tr>
                             <td>Comprovar que o responsável conheceu e aceitou estes documentos</td>
                             <td>Versão, data e hora do aceite</td>
                             <td>Exercício regular de direitos (art. 7º, VI)</td>
@@ -135,10 +147,17 @@
             <p>Essas restrições são verificadas pelo servidor em cada operação, e não apenas escondidas na tela.</p>
 
             <h2 class="h5 mt-4">6. Compartilhamento e serviços externos</h2>
-            <p>Nesta versão, o portal não envia dados pessoais a nenhum serviço externo nem a terceiros, e os dados não
-                são transferidos para fora do Brasil. Se isso mudar, por exemplo com o uso de um serviço de envio de
-                e-mails, esta Política será atualizada antes, informando o serviço, os dados enviados e a finalidade.
-            </p>
+            <p>O portal usa um único serviço externo: o <strong>Brevo</strong>, plataforma de envio de e-mails, usada
+                somente para entregar o link de recuperação de senha quando o próprio usuário pede.</p>
+            <ul>
+                <li><strong>Dados enviados:</strong> nome e e-mail do usuário e o link temporário de recuperação.</li>
+                <li><strong>Dados que não são enviados:</strong> nenhum dado de crianças, de autorizados, fotos ou
+                    registros de retirada.</li>
+                <li><strong>Transferência internacional:</strong> o serviço pode processar esses dados fora do Brasil.
+                    A transferência ocorre apenas para essa finalidade e com as salvaguardas do art. 33 da LGPD.</li>
+            </ul>
+            <p>Nenhum dado é vendido ou usado para publicidade. Se outro serviço externo passar a ser usado, esta
+                Política será atualizada antes, informando o serviço, os dados enviados e a finalidade.</p>
 
             <h2 class="h5 mt-4">7. Por quanto tempo guardamos</h2>
             <div class="table-responsive">
@@ -165,6 +184,11 @@
                             <td>Registros de retirada</td>
                             <td>Até 1 ano após o fim da matrícula</td>
                             <td>Excluídos</td>
+                        </tr>
+                        <tr>
+                            <td>Links de recuperação de senha</td>
+                            <td>30 minutos ou até o primeiro uso</td>
+                            <td>Deixam de funcionar; o registro do pedido segue o prazo dos registros de auditoria</td>
                         </tr>
                         <tr>
                             <td>Registros de acesso e auditoria</td>
