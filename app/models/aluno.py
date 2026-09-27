@@ -2,6 +2,8 @@ from datetime import datetime
 
 from app.extensions import db
 
+TURMAS = ('A', 'B', 'C', 'D')
+
 
 class Aluno(db.Model):
     __tablename__ = 'aluno'

@@ -1,10 +1,9 @@
-import email
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 
 from app.extensions import db
 from app.models import Usuario, Responsavel, Aluno, AuditoriaLog
+from app.models.aluno import TURMAS
 from app.controllers.permissoes import perfil_requerido
 
 secretaria_bp = Blueprint('secretaria', __name__, url_prefix='/secretaria')
@@ -87,6 +86,9 @@ def cadastrar_responsavel():
 def cadastrar_aluno():
     responsaveis = Responsavel.query.all()
 
+    def tela():
+        return render_template('aluno_cadastro.html', responsaveis=responsaveis, turmas=TURMAS)
+
     if request.method == 'POST':
         nome = (request.form.get('nome') or '').strip()
         turma = (request.form.get('turma') or '').strip()
@@ -95,15 +97,19 @@ def cadastrar_aluno():
 
         if not nome or not turma or not numero_matricula or not responsavel_id:
             flash('Preencha todos os campos.', 'warning')
-            return render_template('aluno_cadastro.html', responsaveis=responsaveis)
+            return tela()
+
+        if turma not in TURMAS:
+            flash('Selecione uma turma válida.', 'warning')
+            return tela()
 
         if not Responsavel.query.get(responsavel_id):
             flash('Responsável não encontrado.', 'warning')
-            return render_template('aluno_cadastro.html', responsaveis=responsaveis)
+            return tela()
 
         if Aluno.query.filter_by(numero_matricula=numero_matricula).first():
             flash('Já existe um aluno com essa matrícula.', 'warning')
-            return render_template('aluno_cadastro.html', responsaveis=responsaveis)
+            return tela()
 
         novo_aluno = Aluno(
             nome=nome,
@@ -123,4 +129,4 @@ def cadastrar_aluno():
         flash(f'Aluno {nome} cadastrado com sucesso!', 'success')
         return redirect(url_for('secretaria.painel'))
 
-    return render_template('aluno_cadastro.html', responsaveis=responsaveis)
+    return tela()

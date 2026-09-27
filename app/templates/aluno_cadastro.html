@@ -63,7 +63,12 @@
                     </div>
                     <div class="col-sm-6">
                         <label for="turma" class="form-label">Turma</label>
-                        <input class="form-control" type="text" name="turma" id="turma" maxlength="50" required>
+                        <select class="form-select" id="turma" name="turma" required>
+                            <option value="" selected disabled>Selecione...</option>
+                            {% for turma in turmas %}
+                            <option value="{{ turma }}">Turma {{ turma }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
