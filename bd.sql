@@ -92,6 +92,18 @@ CREATE TABLE IF NOT EXISTS "codigo_2fa" (
 	PRIMARY KEY("id")
 );
 
+CREATE TABLE IF NOT EXISTS "autorizacao" (
+	"id" SERIAL,
+	"autorizado_id" INTEGER NOT NULL,
+	"aluno_id" INTEGER NOT NULL,
+	"data_inicio" DATE NOT NULL,
+	"data_fim" DATE NOT NULL,
+	"criado_em" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	"revogada_em" TIMESTAMP,
+	PRIMARY KEY("id"),
+	CONSTRAINT "chk_periodo_autorizacao" CHECK ("data_fim" >= "data_inicio")
+);
+
 ALTER TABLE "responsavel" 
 	ADD CONSTRAINT "fk_responsavel_usuario" 
 	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
@@ -141,3 +153,13 @@ ALTER TABLE "codigo_2fa"
 	ADD CONSTRAINT "fk_codigo_2fa_usuario" 
 	FOREIGN KEY("usuario_id") REFERENCES "usuario"("id") 
 	ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE "autorizacao" 
+    ADD CONSTRAINT "fk_autorizacao_autorizado" 
+    FOREIGN KEY("autorizado_id") REFERENCES "autorizado"("id") 
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE "autorizacao" 
+    ADD CONSTRAINT "fk_autorizacao_aluno" 
+    FOREIGN KEY("aluno_id") REFERENCES "aluno"("id") 
+    ON UPDATE NO ACTION ON DELETE CASCADE;

@@ -50,6 +50,7 @@
    docker compose exec -T db psql -U admin -d sccp_db < migracoes/002_recuperacao_senha.sql
    docker compose exec -T db psql -U admin -d sccp_db < migracoes/003_email_minusculo.sql
    docker compose exec -T db psql -U admin -d sccp_db < migracoes/004_verificacao_duas_etapas.sql
+   docker compose exec -T db psql -U admin -d sccp_db < migracoes/005_autorizacao_por_periodo.sql
 ```
 
 4. Nas execuções seguintes, basta subir os containers normalmente:

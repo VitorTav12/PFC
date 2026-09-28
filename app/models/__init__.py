@@ -8,3 +8,4 @@ from app.models.aceite_termo import AceiteTermo
 from app.models.token_recuperacao import TokenRecuperacao
 from app.models.email_brevo import EmailBrevo
 from app.models.codigo_2fa import Codigo2FA
+from app.models.autorizacao import Autorizacao
