@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app.extensions import db
 
-VERSAO_TERMOS = '1.0'
+VERSAO_TERMOS = '1.1'
 
 
 class AceiteTermo(db.Model):
