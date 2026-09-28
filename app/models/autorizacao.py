@@ -40,3 +40,10 @@ class Autorizacao(db.Model):
         if data_fim < data_inicio:
             return 'A data de fim precisa ser igual ou posterior à data de início.'
         return None
+
+    @staticmethod
+    def converter_data(texto):
+        try:
+            return date.fromisoformat(texto)
+        except (TypeError, ValueError):
+            return None

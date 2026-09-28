@@ -1,9 +1,11 @@
+from datetime import date, datetime
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app, send_from_directory
 from flask_login import login_required, current_user
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.models import Aluno, Autorizado, AuditoriaLog
+from app.models import Aluno, Autorizado, Autorizacao, AuditoriaLog
 from app.controllers.permissoes import perfil_requerido
 
 responsavel_bp = Blueprint('responsavel', __name__, url_prefix='/responsavel')
@@ -29,7 +31,8 @@ def painel():
     alunos = Aluno.query.filter_by(responsavel_id=responsavel.id).all()
     autorizados = Autorizado.query.filter_by(responsavel_id=responsavel.id).all()
 
-    return render_template('pais.html', responsavel=responsavel, alunos=alunos, autorizados=autorizados)
+    return render_template('pais.html', responsavel=responsavel, alunos=alunos, autorizados=autorizados,
+                           hoje=date.today())
 
 
 @responsavel_bp.route('/autorizados/novo', methods=['GET', 'POST'])
@@ -117,4 +120,78 @@ def remover_autorizado(id):
 
     Autorizado.apagar_foto(nome_foto)
     flash('Autorizado removido com sucesso!', 'success')
+    return redirect(url_for('responsavel.painel'))
+
+
+@responsavel_bp.route('/alunos/<int:aluno_id>/autorizacoes', methods=['POST'])
+@login_required
+@perfil_requerido('pais')
+def criar_autorizacao(aluno_id):
+    responsavel = buscar_responsavel()
+
+    aluno = Aluno.query.filter_by(id=aluno_id, responsavel_id=responsavel.id).first_or_404()
+    autorizado = Autorizado.query.filter_by(
+        id=request.form.get('autorizado_id', type=int),
+        responsavel_id=responsavel.id
+    ).first()
+
+    if not autorizado:
+        flash('Escolha um dos seus autorizados.', 'warning')
+        return redirect(url_for('responsavel.painel'))
+
+    data_inicio = Autorizacao.converter_data(request.form.get('data_inicio'))
+    data_fim = Autorizacao.converter_data(request.form.get('data_fim'))
+
+    erro = Autorizacao.validar_periodo(data_inicio, data_fim)
+    if erro:
+        flash(erro, 'warning')
+        return redirect(url_for('responsavel.painel'))
+
+    autorizacao = Autorizacao(
+        autorizado_id=autorizado.id,
+        aluno_id=aluno.id,
+        data_inicio=data_inicio,
+        data_fim=data_fim
+    )
+    db.session.add(autorizacao)
+    db.session.flush()
+
+    AuditoriaLog.registrar(
+        usuario_id=current_user.id,
+        acao='AUTORIZACAO_CRIADA',
+        detalhes=f"Autorizou '{autorizado.nome}' a retirar '{aluno.nome}' de "
+                 f"{data_inicio.strftime('%d/%m/%Y')} a {data_fim.strftime('%d/%m/%Y')} (autorização {autorizacao.id})"
+    )
+    db.session.commit()
+
+    flash(f'{autorizado.nome} foi autorizado(a) a retirar {aluno.nome}.', 'success')
+    return redirect(url_for('responsavel.painel'))
+
+
+@responsavel_bp.route('/autorizacoes/<int:id>/revogar', methods=['POST'])
+@login_required
+@perfil_requerido('pais')
+def revogar_autorizacao(id):
+    responsavel = buscar_responsavel()
+
+    autorizacao = Autorizacao.query.join(Aluno).filter(
+        Autorizacao.id == id,
+        Aluno.responsavel_id == responsavel.id
+    ).first_or_404()
+
+    if autorizacao.revogada_em:
+        flash('Esta autorização já estava revogada.', 'info')
+        return redirect(url_for('responsavel.painel'))
+
+    autorizacao.revogada_em = datetime.now()
+
+    AuditoriaLog.registrar(
+        usuario_id=current_user.id,
+        acao='AUTORIZACAO_REVOGADA',
+        detalhes=f"Revogou a autorização {autorizacao.id} de '{autorizacao.autorizado.nome}' "
+                 f"para retirar '{autorizacao.aluno.nome}'"
+    )
+    db.session.commit()
+
+    flash('Autorização revogada.', 'success')
     return redirect(url_for('responsavel.painel'))

@@ -58,32 +58,87 @@
                     <div class="accordion-body bg-white">
                         <p class="mb-2"><strong>Número de Matrícula:</strong> {{ aluno.numero_matricula }}</p>
                         <hr>
-                        <h6 class="text-secondary mb-3">Pessoas Autorizadas a Retirar:</h6>
+                        <h6 class="text-secondary mb-3">Autorizações de retirada</h6>
 
-                        {% if autorizados %}
-                        <ul class="list-group">
-                            {% for aut in autorizados %}
+                        {% set cores = {'vigente': 'success', 'agendada': 'primary', 'encerrada': 'secondary',
+                        'revogada': 'danger'} %}
+                        {% if aluno.autorizacoes %}
+                        <ul class="list-group mb-3">
+                            {% for autorizacao in aluno.autorizacoes|sort(attribute='data_inicio', reverse=True) %}
+                            {% set situacao = autorizacao.situacao() %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ url_for('responsavel.foto_autorizado', id=aut.id) }}"
-                                        alt="Foto de {{ aut.nome }}" class="rounded me-2" width="40" height="40"
-                                        style="object-fit: cover;">
-                                    <span class="fw-semibold me-1">{{ aut.nome }}</span>
-                                    <span class="text-muted small">({{ aut.grau_parentesco }})</span>
+                                    <img src="{{ url_for('responsavel.foto_autorizado', id=autorizacao.autorizado.id) }}"
+                                        alt="Foto de {{ autorizacao.autorizado.nome }}" class="rounded me-2" width="40"
+                                        height="40" style="object-fit: cover;">
+                                    <div>
+                                        <span class="fw-semibold">{{ autorizacao.autorizado.nome }}</span>
+                                        <span class="text-muted small">({{ autorizacao.autorizado.grau_parentesco
+                                            }})</span>
+                                        <div class="small text-muted">
+                                            {% if autorizacao.data_inicio == autorizacao.data_fim %}
+                                            Em {{ autorizacao.data_inicio.strftime('%d/%m/%Y') }}
+                                            {% else %}
+                                            De {{ autorizacao.data_inicio.strftime('%d/%m/%Y') }} a {{
+                                            autorizacao.data_fim.strftime('%d/%m/%Y') }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
-                                <!-- Botão individual para remover o autorizado -->
-                                <form action="{{ url_for('responsavel.remover_autorizado', id=aut.id) }}" method="POST"
-                                    class="m-0">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm"
-                                        onclick="return confirm('Deseja realmente remover este autorizado?')">Remover</button>
-                                </form>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge text-bg-{{ cores[situacao] }}">{{ situacao|capitalize }}</span>
+                                    {% if situacao in ('vigente', 'agendada') %}
+                                    <form action="{{ url_for('responsavel.revogar_autorizacao', id=autorizacao.id) }}"
+                                        method="POST" class="m-0">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Deseja revogar esta autorização?')">Revogar</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
                             </li>
                             {% endfor %}
                         </ul>
                         {% else %}
-                        <div class="alert alert-secondary py-2 small mb-0">Nenhum autorizado cadastrado no momento.
-                        </div>
+                        <div class="alert alert-secondary py-2 small">Nenhuma autorização para {{ aluno.nome }}. Você
+                            sempre pode retirar seu filho sem autorização.</div>
+                        {% endif %}
+
+                        {% if autorizados %}
+                        <form action="{{ url_for('responsavel.criar_autorizacao', aluno_id=aluno.id) }}" method="POST"
+                            class="row g-2 align-items-end">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="col-md-4">
+                                <label class="form-label small mb-1" for="autorizado{{ aluno.id }}">Quem vai
+                                    retirar</label>
+                                <select class="form-select form-select-sm" id="autorizado{{ aluno.id }}"
+                                    name="autorizado_id" required>
+                                    <option value="" selected disabled>Selecione...</option>
+                                    {% for aut in autorizados %}
+                                    <option value="{{ aut.id }}">{{ aut.nome }} ({{ aut.grau_parentesco }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-1" for="inicio{{ aluno.id }}">Data de início</label>
+                                <input class="form-control form-control-sm" type="date" id="inicio{{ aluno.id }}"
+                                    name="data_inicio" min="{{ hoje.isoformat() }}" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-1" for="fim{{ aluno.id }}">Data de fim</label>
+                                <input class="form-control form-control-sm" type="date" id="fim{{ aluno.id }}"
+                                    name="data_fim" min="{{ hoje.isoformat() }}" required>
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <button type="submit" class="btn btn-primary btn-sm">Autorizar</button>
+                            </div>
+                        </form>
+                        <p class="small text-muted mt-2 mb-0">Para um dia só, use a mesma data no início e no fim.</p>
+                        {% else %}
+                        <p class="small text-muted mb-0">Cadastre um autorizado em
+                            <a href="{{ url_for('responsavel.cadastrar_autorizado') }}">+ Adicionar Autorizado</a> para
+                            poder autorizá-lo.
+                        </p>
                         {% endif %}
                     </div>
                 </div>
@@ -93,6 +148,34 @@
             <div class="alert alert-warning">Nenhum aluno encontrado vinculado à sua conta.</div>
             {% endif %}
         </div>
+
+
+        <h2 class="h4 mt-4 mb-3">Seus autorizados</h2>
+        <div class="bg-white border rounded shadow-sm mb-4">
+            {% if autorizados %}
+            <ul class="list-group list-group-flush">
+                {% for aut in autorizados %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('responsavel.foto_autorizado', id=aut.id) }}" alt="Foto de {{ aut.nome }}"
+                            class="rounded me-2" width="40" height="40" style="object-fit: cover;">
+                        <span class="fw-semibold me-1">{{ aut.nome }}</span>
+                        <span class="text-muted small">({{ aut.grau_parentesco }})</span>
+                    </div>
+                    <!-- Botão individual para remover o autorizado -->
+                    <form action="{{ url_for('responsavel.remover_autorizado', id=aut.id) }}" method="POST" class="m-0">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Remover este autorizado também apaga as autorizações dele. Continuar?')">Remover</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="p-3 small text-muted">Nenhum autorizado cadastrado no momento.</div>
+            {% endif %}
+        </div>
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
