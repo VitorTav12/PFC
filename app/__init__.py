@@ -3,8 +3,8 @@ import os
 from flask import Flask, flash, redirect, request, url_for
 from flask_wtf.csrf import CSRFError
 
+from app.extensions import csrf, db, login_manager
 from config import Config
-from app.extensions import db, login_manager, csrf
 
 
 def create_app(config_class=Config):
@@ -24,13 +24,12 @@ def create_app(config_class=Config):
     login_manager.login_message = "Por favor, faça login para acessar esta página."
     login_manager.login_message_category = "warning"
 
-    from app import models  
-
+    from app import models  # noqa: F401 (importar registra os models no SQLAlchemy)
     from app.controllers.auth_controller import auth_bp
+    from app.controllers.diretoria_controller import diretoria_bp
+    from app.controllers.lgpd_controller import lgpd_bp
     from app.controllers.responsavel_controller import responsavel_bp
     from app.controllers.secretaria_controller import secretaria_bp
-    from app.controllers.lgpd_controller import lgpd_bp
-    from app.controllers.diretoria_controller import diretoria_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(responsavel_bp)

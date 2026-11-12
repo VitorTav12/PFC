@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
-from app.extensions import db
-from app.models import Usuario, Responsavel, Aluno, AuditoriaLog
-from app.models.aluno import TURMAS
 from app.controllers.permissoes import perfil_requerido
+from app.extensions import db
+from app.models import Aluno, AuditoriaLog, Responsavel, Usuario
+from app.models.aluno import TURMAS
 
 secretaria_bp = Blueprint('secretaria', __name__, url_prefix='/secretaria')
 
@@ -71,7 +71,11 @@ def cadastrar_responsavel():
         )
         db.session.commit()
 
-        flash(f'Responsável {nome} cadastrado com sucesso! No primeiro acesso ele deverá trocar a senha e aceitar os termos.', 'success')
+        flash(
+            f'Responsável {nome} cadastrado com sucesso! '
+            'No primeiro acesso ele deverá trocar a senha e aceitar os termos.',
+            'success'
+        )
         return redirect(url_for('secretaria.painel'))
 
     except Exception:

@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
 
+from app.controllers.permissoes import perfil_requerido
 from app.extensions import db
 from app.models import AceiteTermo, AuditoriaLog, Usuario
 from app.models.aceite_termo import VERSAO_TERMOS
-from app.controllers.permissoes import perfil_requerido
 
 lgpd_bp = Blueprint('lgpd', __name__)
 
@@ -68,7 +68,10 @@ def primeiro_acesso():
             AuditoriaLog.registrar(
                 usuario_id=current_user.id,
                 acao='ACEITE_TERMOS',
-                detalhes=f"Usuário '{current_user.nome}' aceitou os Termos de Uso e a Política de Privacidade (versão {VERSAO_TERMOS})."
+                detalhes=(
+                    f"Usuário '{current_user.nome}' aceitou os Termos de Uso e a "
+                    f"Política de Privacidade (versão {VERSAO_TERMOS})."
+                )
             )
 
         db.session.commit()

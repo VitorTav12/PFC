@@ -1,0 +1,2 @@
+# Ferramentas de desenvolvimento/CI (não são necessárias em produção)
+ruff==0.17.2
