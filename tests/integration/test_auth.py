@@ -1,5 +1,6 @@
 from app.models import AuditoriaLog
 
+
 def test_status_banco_comSucesso_deveRetornar200(client):
     response = client.get('/status')
     assert response.status_code == 200
@@ -13,10 +14,10 @@ def test_login_comCredenciaisInvalidas_deveRetornarStatus200EMensagemErro(client
 
 def test_login_comCredenciaisValidas_deveRealizarLoginERegistrarAuditoria(client, app, criar_usuario_pais):
     user_id, _, email, senha = criar_usuario_pais
-    
+
     response = client.post('/', data={'email': email, 'senha': senha}, follow_redirects=True)
     assert response.status_code == 200
-    
+
     with app.app_context():
         log = AuditoriaLog.query.filter_by(usuario_id=user_id, acao='LOGIN_SUCESSO').first()
         assert log is not None

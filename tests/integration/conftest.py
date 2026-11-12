@@ -4,8 +4,9 @@ import pytest
 from sqlalchemy.pool import StaticPool
 
 from app import create_app, db
-from app.models import Usuario, Responsavel, AceiteTermo
+from app.models import AceiteTermo, Responsavel, Usuario
 from app.models.aceite_termo import VERSAO_TERMOS
+
 
 @pytest.fixture(scope='session')
 def app():
@@ -21,7 +22,7 @@ def app():
         "SERVER_NAME": "localhost.localdomain",
         "UPLOAD_FOLDER": "/tmp"
     })
-    
+
     with app.app_context():
         db.create_all()
         yield app
@@ -41,7 +42,7 @@ def criar_usuario_pais(app):
     with app.app_context():
         import time
         ts = str(time.time_ns())
-        
+
         user = Usuario(
             nome=f"Pai Teste {ts}",
             email=f"pai_{ts}@teste.com",
@@ -51,10 +52,10 @@ def criar_usuario_pais(app):
         user.set_senha("Senha123!")
         db.session.add(user)
         db.session.flush()
-        
+
         aceite = AceiteTermo(usuario_id=user.id, versao=VERSAO_TERMOS)
         db.session.add(aceite)
-        
+
         resp = Responsavel(usuario_id=user.id, nome=user.nome, email_pessoal=user.email)
         db.session.add(resp)
         db.session.commit()

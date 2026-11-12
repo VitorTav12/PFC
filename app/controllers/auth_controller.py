@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import Blueprint, current_app, flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import text
 
 from app.extensions import db
-from app.models import Usuario, AuditoriaLog, TokenRecuperacao, EmailBrevo, Codigo2FA
+from app.models import AuditoriaLog, Codigo2FA, EmailBrevo, TokenRecuperacao, Usuario
+from app.models.codigo_2fa import MAX_TENTATIVAS, VALIDADE_CODIGO
 from app.models.token_recuperacao import VALIDADE_TOKEN
-from app.models.codigo_2fa import VALIDADE_CODIGO, MAX_TENTATIVAS
 
 auth_bp = Blueprint('auth', __name__)
 

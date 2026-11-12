@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from flask import Blueprint, render_template
 from flask_login import login_required
 
-from app.models import Aluno, Responsavel, Autorizado, Movimentacao, Usuario, AuditoriaLog
 from app.controllers.permissoes import perfil_requerido
+from app.models import Aluno, AuditoriaLog, Autorizado, Movimentacao, Responsavel, Usuario
 
 diretoria_bp = Blueprint('diretoria', __name__, url_prefix='/diretoria')
 

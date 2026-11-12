@@ -16,7 +16,7 @@ class Autorizado(db.Model):
     responsavel_id = db.Column(db.Integer, db.ForeignKey('responsavel.id'), nullable=False)
     nome = db.Column(db.String(150), nullable=False)
     grau_parentesco = db.Column(db.String(50), nullable=False)
-    foto = db.Column(db.Text, nullable=False)  
+    foto = db.Column(db.Text, nullable=False)
     criado_em = db.Column(db.DateTime, default=datetime.now)
 
     @staticmethod

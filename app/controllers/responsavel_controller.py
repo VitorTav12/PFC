@@ -1,12 +1,12 @@
 from datetime import date, datetime
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, current_app, send_from_directory
-from flask_login import login_required, current_user
+from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, send_from_directory, url_for
+from flask_login import current_user, login_required
 from sqlalchemy.exc import IntegrityError
 
-from app.extensions import db
-from app.models import Aluno, Autorizado, Autorizacao, AuditoriaLog
 from app.controllers.permissoes import perfil_requerido
+from app.extensions import db
+from app.models import Aluno, AuditoriaLog, Autorizacao, Autorizado
 
 responsavel_bp = Blueprint('responsavel', __name__, url_prefix='/responsavel')
 
