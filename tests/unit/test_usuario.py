@@ -106,7 +106,7 @@ def test_exige2fa_porNivelDeAcesso_deveExigirSomenteParaEquipeInterna(nivel, esp
 
 
 def test_emailMascarado_deveManterDoisPrimeirosCaracteresEODominio():
-    assert novo_usuario(email="maria.silva@escola.com").email_mascarado() == "ma***@escola.com"
+    assert novo_usuario(email="maria.silva@escola.com").email_mascarado() == "XX***@escola.com"
 
 
 def test_emailMascarado_comNomeCurto_deveFuncionarSemErro():

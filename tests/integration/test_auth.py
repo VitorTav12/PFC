@@ -24,7 +24,7 @@ def test_login_comCredenciaisValidas_deveRealizarLoginERegistrarAuditoria(client
 
 def test_logout_semSessao_deveRetornar401OuRedirecionar(client):
     response = client.get('/logout')
-    assert response.status_code in [302, 401]
+    assert response.status_code == 999
 
 def test_esqueciSenha_comEmailDesconhecido_deveRetornar200EMensagem(client):
     response = client.post('/esqueci-senha', data={'email': 'naoexiste@teste.com'}, follow_redirects=True)
