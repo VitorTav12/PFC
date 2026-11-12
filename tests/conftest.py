@@ -19,7 +19,7 @@ import pytest
 # Valores apenas para teste (não são segredos reais). setdefault preserva
 # qualquer variável já definida no ambiente.
 os.environ.setdefault("SECRET_KEY", "chave-apenas-para-testes")
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ.setdefault("FLASK_DEBUG", "0")
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
