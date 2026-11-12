@@ -1,67 +1,37 @@
+"""Configuração comum a toda a suíte.
+
+Os testes são separados por pasta e o marcador correspondente é aplicado
+automaticamente:
+
+    tests/unit/         -> @pytest.mark.unit
+    tests/integration/  -> @pytest.mark.integration
+
+Assim a pipeline roda cada grupo isoladamente:
+
+    pytest -m unit
+    pytest -m integration
+"""
 import os
 import sys
-from unittest.mock import patch
+
 import pytest
-from sqlalchemy.pool import StaticPool
 
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-os.environ["FLASK_DEBUG"] = "0"
+# Valores apenas para teste (não são segredos reais). setdefault preserva
+# qualquer variável já definida no ambiente.
+os.environ.setdefault("SECRET_KEY", "chave-apenas-para-testes")
+os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+os.environ.setdefault("FLASK_DEBUG", "0")
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app import create_app, db
-from app.models import Usuario, Responsavel, AceiteTermo
-from app.models.aceite_termo import VERSAO_TERMOS
+GRUPOS = ("unit", "integration")
 
-@pytest.fixture(scope='session')
-def app():
-    app = create_app()
-    app.config.update({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "SQLALCHEMY_ENGINE_OPTIONS": {
-            "poolclass": StaticPool,
-            "connect_args": {"check_same_thread": False}
-        },
-        "WTF_CSRF_ENABLED": False,
-        "SERVER_NAME": "localhost.localdomain",
-        "UPLOAD_FOLDER": "/tmp"
-    })
-    
-    with app.app_context():
-        db.create_all()
-        yield app
-        db.drop_all()
 
-@pytest.fixture
-def client(app):
-    return app.test_client()
-
-@pytest.fixture(autouse=True)
-def mock_brevo():
-    with patch('app.models.EmailBrevo.enviar', return_value='sucesso'):
-        yield
-
-@pytest.fixture
-def criar_usuario_pais(app):
-    with app.app_context():
-        import time
-        ts = str(time.time_ns())
-        
-        user = Usuario(
-            nome=f"Pai Teste {ts}",
-            email=f"pai_{ts}@teste.com",
-            nivel_acesso="pais",
-            precisa_trocar_senha=False
-        )
-        user.set_senha("Senha123!")
-        db.session.add(user)
-        db.session.flush()
-        
-        aceite = AceiteTermo(usuario_id=user.id, versao=VERSAO_TERMOS)
-        db.session.add(aceite)
-        
-        resp = Responsavel(usuario_id=user.id, nome=user.nome, email_pessoal=user.email)
-        db.session.add(resp)
-        db.session.commit()
-        return user.id, resp.id, user.email, "Senha123!"
+def pytest_collection_modifyitems(items):
+    for item in items:
+        grupo = item.path.parent.name
+        if grupo not in GRUPOS:
+            raise pytest.UsageError(
+                f"{item.nodeid}: todo teste deve ficar em tests/unit/ ou tests/integration/"
+            )
+        item.add_marker(getattr(pytest.mark, grupo))
