@@ -1,0 +1,9 @@
+# Configuração do linter (Ruff). Usada localmente e pela pipeline (job "Linter").
+line-length = 120
+target-version = "py311"
+extend-exclude = ["uploads"]
+
+[lint]
+# E/W: pycodestyle (erros e avisos de estilo) | F: pyflakes (imports não usados,
+# nomes indefinidos, redefinições) | I: isort (ordem dos imports) | B: flake8-bugbear
+select = ["E", "F", "W", "I", "B"]
